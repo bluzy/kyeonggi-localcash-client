@@ -5,6 +5,8 @@ import { debounce } from 'lodash';
 
 class Map extends React.Component {
 
+  moveTimeout = null;
+
   state = {
     loading: false,
     shops: []
@@ -21,10 +23,18 @@ class Map extends React.Component {
 
   onBoundsChanged = (bound) => {
     console.log(bound);
-    const { _min, _max } = bound;
-    const { _lat: fromLat, _lng: fromLng } = _min;
-    const { _lat: toLat, _lng: toLng } = _max;
-    this.loadShops(fromLat, fromLng, toLat, toLng);
+    if (this.moveTimeout) {
+      clearTimeout(this.moveTimeout);
+    }
+
+    this.moveTimeout = setTimeout(() => {
+      this.moveTimeout = null;
+
+      const { _min, _max } = bound;
+      const { _lat: fromLat, _lng: fromLng } = _min;
+      const { _lat: toLat, _lng: toLng } = _max;
+      this.loadShops(fromLat, fromLng, toLat, toLng);
+    }, 500);
   }
 
 
